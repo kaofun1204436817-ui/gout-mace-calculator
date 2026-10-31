@@ -56,3 +56,12 @@ Guo F, et al. Predicting in-hospital major adverse cardiovascular events in crit
 ## Disclaimer
 
 Research use only. This calculator is a risk-stratification aid and does not replace clinical judgment.
+
+## Full analysis pipeline
+
+The complete reproducible pipeline (extraction SQL and modeling scripts) is in the `pipeline/` directory:
+
+- `pipeline/03_数据管线/*.sql` — cohort construction, outcome definitions, and feature extraction for MIMIC-IV v3.1 and eICU-CRD v2.0 (scripts prefixed p0-p13 in dependency order).
+- `pipeline/04_模型/*.py` — final model (`model_final_v7.py`), three-tier drug-exposure analysis (`subgroup_psm_v3.py`, PSM / IPTW / multivariable adjustment), figure scripts (`figure_final.py`, `figure_v2_fixes.py`, `nomogram_publish.py`), and table generation (`make_tables.py`).
+
+Run order: SQL pipelines first (per-database, p0 -> p13), then `model_final_v7.py --target mace|mace3|mace_alldeath`, then `subgroup_psm_v3.py`, then `figure_final.py` / `figure_v2_fixes.py` / `nomogram_publish.py` / `make_tables.py`.
