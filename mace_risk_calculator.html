@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedside MACE Risk Calculator - ICU Gout Patients</title>
+<style>
+  :root{
+    --main:#9B2335; --dark:#5F1421; --bg:#f5f6f8; --card:#ffffff; --accent:#C89F9C;
+    --text:#1f2937; --muted:#6b7280; --ok:#177245; --warn:#b45309; --high:#9b1c1c;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:24px;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  .banner{background:linear-gradient(135deg,var(--main),var(--dark));color:#fff;border-radius:14px;padding:22px 28px;margin-bottom:22px;}
+  .banner h1{margin:0 0 6px;font-size:22px;font-weight:600;}
+  .banner p{margin:2px 0;opacity:.92;font-size:13px;line-height:1.5;}
+  .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;}
+  @media(max-width:820px){.grid{grid-template-columns:1fr;}}
+  .card{background:var(--card);border:1px solid #e5e7eb;border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .card h2{font-size:15px;margin:0 0 12px;color:var(--dark);font-weight:600;border-bottom:2px solid var(--accent);padding-bottom:6px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:4px;color:var(--text);}
+  .field input[type=number],.field select{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;background:#fff;}
+  .field .hint{font-size:11px;color:var(--muted);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .result{padding:18px;border-radius:10px;text-align:center;margin-top:16px;}
+  .result .prob{font-size:40px;font-weight:700;line-height:1.1;}
+  .result .cat{font-size:14px;font-weight:600;margin-top:6px;}
+  .result .note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;}
+  .low{background:#eaf7f0;border:1px solid #bfe3cf;}
+  .mid{background:#fdf3e3;border:1px solid #f0d9a8;}
+  .high{background:#fdeaea;border:1px solid #f2b8b8;}
+  .btn{background:var(--main);color:#fff;border:none;padding:11px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-right:8px;}
+  .btn:hover{background:var(--dark);}
+  .btn-sec{background:#fff;color:var(--main);border:1.5px solid var(--main);}
+  .disclaimer{font-size:11.5px;color:var(--muted);background:#fff8ee;border-left:3px solid var(--warn);padding:10px 12px;border-radius:6px;margin-top:16px;line-height:1.55;}
+  .perf{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+  .perf .m{background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:8px;text-align:center;}
+  .perf .m b{font-size:16px;color:var(--dark);display:block;}
+  .perf .m span{font-size:11px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="banner">
+    <h1>In-hospital MACE Risk Calculator — ICU patients with gout</h1>
+    <p>Strict 6-event MACE (acute MI, new stroke, cardiogenic shock, malignant arrhythmia, acute heart failure, cardiac death)</p>
+    <p>Model: MIMIC-IV derivation (n=2,853) &middot; External validation: eICU-CRD (n=962) &middot; AUC 0.782 internal / 0.673 external</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Patient inputs (first 24h in ICU)</h2>
+      <div class="row2">
+        <div class="field"><label>Age (years)</label><input type="number" id="anchor_age" value="70" min="18" max="110"></div>
+        <div class="field"><label>GCS total score</label><input type="number" id="gcs_total" value="14" min="3" max="15"></div>
+        <div class="field"><label>BUN (mg/dL)</label><input type="number" id="bun" value="25" min="1" max="300"></div>
+        <div class="field"><label>Respiratory rate (breaths/min)</label><input type="number" id="rr_mean" value="18" min="4" max="60" step="0.1"></div>
+        <div class="field"><label>Chloride (mmol/L)</label><input type="number" id="chloride" value="104" min="70" max="140"></div>
+        <div class="field"><label>Hemoglobin (g/dL)</label><input type="number" id="hemoglobin" value="10.7" min="3" max="22" step="0.1"></div>
+        <div class="field"><label>WBC (10^9/L)</label><input type="number" id="wbc" value="10.5" min="0.1" max="200" step="0.1"></div>
+        <div class="field"><label>Mean SBP (mmHg)</label><input type="number" id="sbp_mean" value="117" min="40" max="280"></div>
+        <div class="field"><label>Creatinine (mg/dL)</label><input type="number" id="creatinine" value="1.2" min="0.2" max="20" step="0.1"></div>
+        <div class="field"><label>P2Y12 inhibitor</label>
+          <select id="med_p2y12"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Diuretic use</label>
+          <select id="med_diuretic"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Beta-blocker</label>
+          <select id="med_betablocker"><option value="0">No</option><option value="1">Yes</option></select></div>
+      </div>
+      <div style="margin-top:16px;">
+        <button class="btn" onclick="calc()">Calculate risk</button>
+        <button class="btn btn-sec" onclick="reset()">Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Risk estimate</h2>
+      <div id="resultBox" class="result low">
+        <div class="prob" id="probText">--</div>
+        <div class="cat" id="catText">Enter values and calculate</div>
+        <div class="note" id="scoreText"></div>
+      </div>
+      <div class="perf">
+        <div class="m"><b>0.782</b><span>Derivation AUC</span></div>
+        <div class="m"><b>0.673</b><span>External AUC</span></div>
+        <div class="m"><b>38.1%</b><span>Event rate (MIMIC)</span></div>
+      </div>
+      <div class="disclaimer">
+        <b>Research use only.</b> This calculator is derived from the MIMIC-IV cohort and validated on eICU-CRD; it is a risk-stratification aid, not a diagnostic tool or substitute for clinical judgment. Prediction refers to in-hospital strict 6-event MACE in critically ill adults with gout admitted to ICU.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const scoring = [
+  {id:"anchor_age", beta:0.02231762577275091, lo:49, hi:89},
+  {id:"gcs_total", beta:-0.02592201998631502, lo:3, hi:15},
+  {id:"bun", beta:0.011104160705409956, lo:10, hi:87},
+  {id:"rr_mean", beta:0.05538890737490993, lo:14.08, hi:25.976},
+  {id:"chloride", beta:-0.058155600881078205, lo:94, hi:113},
+  {id:"hemoglobin", beta:0.1276690297688269, lo:7.3, hi:14.5},
+  {id:"wbc", beta:-0.008182548702670529, lo:4.6, hi:22.8},
+  {id:"sbp_mean", beta:0.0036106401389396463, lo:97.37, hi:150.52},
+  {id:"creatinine", beta:-0.004488979411451294, lo:0.6, hi:5.0},
+  {id:"med_p2y12", beta:1.4407860487377, lo:0, hi:1},
+  {id:"med_diuretic", beta:0.5435660628665044, lo:0, hi:1},
+  {id:"med_betablocker", beta:0.648381449054287, lo:0, hi:1}
+];
+const CAL_CONST = -4.539222418164871;
+const CAL_COEF = 0.00686005800343645;
+
+function calc(){
+  let total = 0; let missing = false;
+  for(const s of scoring){
+    const el = document.getElementById(s.id);
+    let v = parseFloat(el.value);
+    if(isNaN(v)){missing=true; continue;}
+    if(s.id.startsWith("med_")){ v = (el.value==="1"||v===1)?1:0; }
+    let pts;
+    if(s.beta >= 0){
+      pts = Math.max(0, Math.min(1, (v - s.lo)/(s.hi - s.lo))) * 100;
+    } else {
+      pts = Math.max(0, Math.min(1, (s.hi - v)/(s.hi - s.lo))) * 100;
+    }
+    total += pts;
+  }
+  const risk = 1/(1+Math.exp(-(CAL_CONST + CAL_COEF*total)));
+  const pct = (risk*100).toFixed(1);
+  const box = document.getElementById("resultBox");
+  const cat = document.getElementById("catText");
+  const score = document.getElementById("scoreText");
+  if(missing){
+    box.className = "result high"; document.getElementById("probText").textContent="?";
+    cat.textContent="Missing input"; score.textContent="Please provide all fields.";
+    return;
+  }
+  document.getElementById("probText").textContent = pct + "%";
+  score.textContent = "Total points: " + Math.round(total);
+  if(risk < 0.25){ box.className="result low"; cat.textContent="Low risk category"; }
+  else if(risk < 0.45){ box.className="result mid"; cat.textContent="Intermediate risk category"; }
+  else { box.className="result high"; cat.textContent="High risk category"; }
+}
+function reset(){
+  const defs = {anchor_age:70, gcs_total:14, bun:25, rr_mean:18, chloride:104,
+                hemoglobin:10.7, wbc:10.5, sbp_mean:117, creatinine:1.2};
+  for(const d in defs) document.getElementById(d).value = defs[d];
+  ["med_p2y12","med_diuretic","med_betablocker"].forEach(id=>document.getElementById(id).value="0");
+  document.getElementById("probText").textContent = "--";
+  document.getElementById("catText").textContent = "Enter values and calculate";
+  document.getElementById("scoreText").textContent = "";
+  document.getElementById("resultBox").className = "result low";
+}
+</script>
+</body>
+</html>
