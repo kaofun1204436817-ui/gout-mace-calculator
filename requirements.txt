@@ -1,2 +1,40 @@
-streamlit>=1.30
-numpy
+# ---------------------------------------------------------------------------
+# gout-MACE 模型代码交付包 —— 精确锁定依赖
+# ---------------------------------------------------------------------------
+# 版本号由生成时实际运行环境读取（import <mod>; <mod>.__version__），
+# 不是估计值。环境：Python 3.10.4 (CPython, Windows x86-64)。
+#
+# 安装：
+#   python -m venv .venv
+#   .venv/Scripts/activate            (Windows)
+#   source .venv/bin/activate          (Linux/macOS)
+#   pip install -r requirements.txt
+#
+# 说明：本包只需要这些库即可完成全部复现验证（calibration.py /
+# recalibration.py / verify_all.py）。若要从原始数据重训模型
+# （model_final_v7.py），除下列依赖外还需要能访问 MIMIC-IV 与
+# eICU-CRD 的受限数据库（见 README "数据获取" 一节）。
+# ---------------------------------------------------------------------------
+
+# ---- 核心数值与数据框 ----
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.15.3
+
+# ---- 建模 ----
+scikit-learn==1.7.2
+xgboost==3.2.0
+lightgbm==4.7.0
+shap==0.47.0
+
+# ---- 校准统计（标准误、GLM、卡方） ----
+statsmodels==0.15.0
+
+# ---- 制图（Figure 2-6） ----
+matplotlib==3.10.9
+
+# ---- 模型序列化 ----
+joblib==1.6.0
+
+# ---- 在线计算器（仅部署 calculator 时需要，复现分析不需要） ----
+streamlit==1.65.0
