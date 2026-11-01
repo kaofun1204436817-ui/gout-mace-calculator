@@ -1,0 +1,83 @@
+[
+  {
+    "name": "Fig1_flowchart",
+    "w_in": 7.19,
+    "h_in": 4.56,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 240
+  },
+  {
+    "name": "Fig2_ROC",
+    "w_in": 7.04,
+    "h_in": 6.79,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 468
+  },
+  {
+    "name": "Fig3_calibration",
+    "w_in": 7.1,
+    "h_in": 6.69,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 409
+  },
+  {
+    "name": "Fig4_DCA",
+    "w_in": 7.1,
+    "h_in": 6.49,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 388
+  },
+  {
+    "name": "Fig5A_shap_summary",
+    "w_in": 6.7,
+    "h_in": 6.31,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 1146
+  },
+  {
+    "name": "Fig5B_shap_bar",
+    "w_in": 6.95,
+    "h_in": 5.81,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 253
+  },
+  {
+    "name": "Fig6_nomogram",
+    "w_in": 5.91,
+    "h_in": 6.13,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 160
+  },
+  {
+    "name": "Fig7_subgroup",
+    "w_in": 6.94,
+    "h_in": 6.44,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 244
+  },
+  {
+    "name": "Fig8_PSM",
+    "w_in": 6.11,
+    "h_in": 4.83,
+    "mode": "RGB",
+    "dpi": 300,
+    "comp": "tiff_lzw",
+    "kb": 174
+  }
+]
