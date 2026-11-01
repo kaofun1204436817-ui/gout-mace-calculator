@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-11-01T20:34:38",
+  "target": "mace",
+  "target_definition": "strict 6-event in-hospital MACE (acute MI, new stroke, cardiogenic shock, malignant arrhythmia, acute heart failure, cardiac death)",
+  "framework": {
+    "xgboost": "3.2.0",
+    "python": "3.10.4",
+    "scikit-learn": "1.7.2",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3"
+  },
+  "params": {
+    "n_estimators": 250,
+    "max_depth": 5,
+    "learning_rate": 0.03,
+    "subsample": 0.8,
+    "colsample_bytree": 0.7,
+    "scale_pos_weight": 1.6270718232044197,
+    "base_score": 0.5,
+    "eval_metric": "auc",
+    "random_state": 42
+  },
+  "feature_selection_rule": "all MIMIC∩eICU columns minus metadata/outcome columns, then drop columns with >50% missing in either cohort, then add missing-indicator columns for any feature with missingness strictly between 3% and 50% in the training cohort",
+  "n_features": 47,
+  "n_base_features": 45,
+  "missing_indicators": [
+    "calcium",
+    "map_min"
+  ],
+  "n_train_mimic": 2853,
+  "n_events_mimic": 1086,
+  "mimic_event_rate": 0.380652,
+  "n_external_eicu": 962,
+  "n_events_eicu": 94,
+  "eicu_event_rate": 0.097713,
+  "cv": {
+    "scheme": "RepeatedStratifiedKFold(5 folds x 5 repeats)",
+    "random_state": 42,
+    "n_fits": 25
+  },
+  "performance": {
+    "internal_oof": {
+      "auc": 0.781175,
+      "auprc": 0.709738,
+      "brier": 0.183021
+    },
+    "external_eicu_25fit_avg": {
+      "auc": 0.672076,
+      "auprc": 0.163365,
+      "brier": 0.136586
+    }
+  },
+  "roundtrip_max_abs_diff": {
+    "ubj": 0.0,
+    "pkl": 0.0
+  },
+  "files": {
+    "xgb_mace6.ubj": {
+      "bytes": 607176,
+      "sha256": "ef460708df471c49af5fb2da05b80065bae868e5cd8319709382d044d5cba13c"
+    },
+    "xgb_mace6.pkl": {
+      "bytes": 611460,
+      "sha256": "b8202f66a4d6aa0adc314669455e3e09c62292ea90a4ce9fdc4d906c0e1ccdd7"
+    },
+    "features.json": {
+      "bytes": 731,
+      "sha256": "e34175b499fa0b88ce1bd60fbb2e19a4fe78c91fec20ec7902601bf33266aa54"
+    }
+  },
+  "usage_warning": "This object is the final model refitted on the full MIMIC-IV derivation cohort, which is what the manuscript's nomogram and calculator use. Evaluating it on the derivation cohort itself will give an optimistically biased AUROC (approximately 0.98) because those patients were used in fitting. The unbiased internal estimate is internal_oof.auc = 0.781, obtained from 25-fold out-of-fold predictions, and the external estimate is external_eicu_25fit_avg.auc = 0.672. To reproduce the manuscript figures, use the archived out-of-fold prediction vectors in results_final/<target>/oof_XGB.npy rather than re-predicting on the training data.",
+  "version_note": "Model exported with the same Python and xgboost versions pinned in 09_代码交付包/requirements.txt (Python 3.10.4, xgboost 3.2.0). An earlier export used a different environment; this file supersedes it so that loading the artifact with the pinned requirements needs no compatibility conversion."
+}
