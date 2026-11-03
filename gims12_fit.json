@@ -193,5 +193,64 @@
     "internal_auroc": 0.8117,
     "external_auroc": 0.7476,
     "n_features": 47
+  },
+  "clip_bounds": {
+    "lower": {
+      "anchor_age": 38.0,
+      "gcs_total": 3.0,
+      "sbp_mean": 88.824,
+      "rr_mean": 12.3427,
+      "spo2_mean": 90.7262,
+      "bun": 7.0,
+      "creatinine": 0.5,
+      "hemoglobin": 6.1,
+      "platelet": 26.0,
+      "wbc": 1.952,
+      "calcium": 6.152,
+      "chloride": 88.0
+    },
+    "upper": {
+      "anchor_age": 91.0,
+      "gcs_total": 15.0,
+      "sbp_mean": 163.5343,
+      "rr_mean": 29.9567,
+      "spo2_mean": 99.9244,
+      "bun": 126.96,
+      "creatinine": 9.488,
+      "hemoglobin": 15.948,
+      "platelet": 539.8,
+      "wbc": 35.4,
+      "calcium": 10.6,
+      "chloride": 118.0
+    },
+    "basis": "1st and 99th percentile of the derivation cohort; inputs are clamped to this range before computing the linear predictor",
+    "rationale": "Calibration in the external cohort fails largely through extrapolation: clamping inputs raises the external calibration slope from 0.497 to 0.740 and the Brier skill score from -0.090 to +0.020 without discarding any patient."
+  },
+  "performance_external_unclipped": {
+    "auroc": 0.7182,
+    "brier": 0.0647,
+    "skill": -0.09,
+    "cal_slope": 0.497,
+    "cal_intercept": -1.461,
+    "mean_pred": 0.0926
+  },
+  "performance_external_clipped": {
+    "auroc": 0.7233,
+    "brier": 0.0582,
+    "skill": 0.02,
+    "cal_slope": 0.74,
+    "cal_intercept": -0.83,
+    "mean_pred": 0.081
+  },
+  "performance_external_clipped_plus_platt": {
+    "brier": 0.0572,
+    "skill": 0.037,
+    "auroc": 0.7103
+  },
+  "fraction_external_outside_support": 0.0478,
+  "internal_auroc_clipped": 0.7832,
+  "internal_auroc_unclipped": 0.7826,
+  "nested_cv": {
+    "note": "selection performed inside each fold; see 07_审计/R19_嵌套CV_同口径.json"
   }
 }

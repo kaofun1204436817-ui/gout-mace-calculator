@@ -32,14 +32,24 @@ FEATURES = {
 ORDER = ["anchor_age", "gcs_total", "sbp_mean", "rr_mean", "spo2_mean",
          "bun", "creatinine", "hemoglobin", "platelet", "wbc", "calcium", "chloride"]
 
-# 推导队列 1–99 百分位：超出即视为外推，界面给出提示
-EXTRAP_RANGE = {
-    "anchor_age": (38.0, 91.0), "gcs_total": (3.0, 15.0),
-    "sbp_mean": (88.8, 163.6), "rr_mean": (12.3, 30.0), "spo2_mean": (90.7, 99.9),
-    "bun": (7.0, 128.0), "creatinine": (0.5, 9.8), "hemoglobin": (6.1, 16.0),
-    "platelet": (25.7, 545.0), "wbc": (1.9, 36.7), "calcium": (6.0, 10.6),
+# 推导队列 1–99 百分位：既作为外推提示边界，也作为计算前的硬截断边界。
+# 外部校准失败主要来自外推；截断后外部校准斜率由 0.497 升至 0.740，
+# Brier 技巧分由 −0.090 转为 +0.020，且不丢弃任何患者（见 gims12_fit.json）。
+CLIP_BOUNDS = {
+    "anchor_age": (38.0, 91.0),
+    "gcs_total": (3.0, 15.0),
+    "sbp_mean": (88.824, 163.5343),
+    "rr_mean": (12.3427, 29.9567),
+    "spo2_mean": (90.7262, 99.9244),
+    "bun": (7.0, 126.96),
+    "creatinine": (0.5, 9.488),
+    "hemoglobin": (6.1, 15.948),
+    "platelet": (26.0, 539.8),
+    "wbc": (1.952, 35.4),
+    "calcium": (6.152, 10.6),
     "chloride": (88.0, 118.0),
 }
+EXTRAP_RANGE = CLIP_BOUNDS  # 向后兼容旧名
 
 # 外部队列（eICU-CRD）导出的重校准映射：lp' = slope * lp + intercept
 RECAL_SLOPE = 0.4973
@@ -76,12 +86,29 @@ def ui_default(key):
     return float(round(med, dp))
 
 
-def linear_predictor(values, recalibrate=False):
-    """values: dict feature -> float. 缺失键使用推导队列中位数。"""
+def clip_values(values):
+    """把各变量限制在推导队列 1–99 百分位内。返回 (截断后的字典, 被截断的变量列表)。"""
+    out, hit = {}, []
+    for k in ORDER:
+        v = values.get(k, None)
+        v = FEATURES[k][1] if v is None else float(v)
+        lo, hi = CLIP_BOUNDS[k]
+        if v < lo:
+            v, hit = lo, hit + [k]
+        elif v > hi:
+            v, hit = hi, hit + [k]
+        out[k] = v
+    return out, hit
+
+
+def linear_predictor(values, recalibrate=False, clip=True):
+    """values: dict feature -> float. 缺失键使用推导队列中位数。
+    clip=True 时先截断到推导队列 1–99 百分位（默认，也是验证过的做法）。"""
+    vals = clip_values(values)[0] if clip else values
     lp = INTERCEPT
     for k in ORDER:
         b, med = FEATURES[k][0], FEATURES[k][1]
-        v = values.get(k, None)
+        v = vals.get(k, None)
         v = med if v is None else float(v)
         lp += b * v
     if recalibrate:
@@ -89,8 +116,8 @@ def linear_predictor(values, recalibrate=False):
     return lp
 
 
-def predict(values, recalibrate=False):
-    lp = linear_predictor(values, recalibrate=recalibrate)
+def predict(values, recalibrate=False, clip=True):
+    lp = linear_predictor(values, recalibrate=recalibrate, clip=clip)
     if lp >= 0:
         return 1.0 / (1.0 + exp(-lp))
     e = exp(lp)

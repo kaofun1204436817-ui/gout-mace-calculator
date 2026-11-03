@@ -57,9 +57,11 @@ TXT = {
         "disc": "Limitations and intended use",
         "cite": "Citation",
         "reset": "Reset to cohort median",
-        "extrap": ("Outside the derivation range: {names}. The score is a linear model "
-                   "and extrapolates without bound, so treat this estimate as indicative only."),
-        "extrap_h": "Extrapolation warning",
+        "extrap": ("{detail}. The score is validated only between the 1st and 99th "
+                   "percentile of the derivation cohort, so values outside that range are "
+                   "clamped before the risk is computed and the displayed probability is the "
+                   "estimate at the boundary of the validated range."),
+        "extrap_h": "Extrapolation guard applied",
     },
     "zh": {
         "title": "GIMS-12 · 24 小时死亡风险",
@@ -90,9 +92,9 @@ TXT = {
         "disc": "局限与用途",
         "cite": "引用",
         "reset": "恢复为队列中位数",
-        "extrap": ("以下变量超出推导队列范围：{names}。本评分为线性模型，外推无界，"
-                   "该估计仅供参考。"),
-        "extrap_h": "外推提示",
+        "extrap": ("{detail}。本评分仅在推导队列 1–99 百分位内验证，超出该范围的取值"
+                   "在计算前被截断，显示的概率是验证范围边界处的估计值。"),
+        "extrap_h": "已启用外推保护",
     },
 }
 
@@ -176,10 +178,18 @@ with right:
             f"**{exp_deaths:.0f}** 例在入 ICU 24 小时后、出院前死亡。"
         )
 
-    far = G.outside_range(values)
-    if far:
-        names = ", ".join((G.FEATURES[k][2] if lang == "en" else G.FEATURES[k][3]) for k in far)
-        st.warning(f"**{t['extrap_h']}** " + t["extrap"].format(names=names))
+    _, clamped = G.clip_values(values)
+    if clamped:
+        bits = []
+        for k in clamped:
+            lo, hi = G.CLIP_BOUNDS[k]
+            orig = float(values[k])
+            used = lo if orig < lo else hi
+            lab = G.FEATURES[k][2] if lang == "en" else G.FEATURES[k][3]
+            dp = 0 if G.FEATURES[k][7] >= 1 else 1
+            bits.append(f"{lab} {orig:g} → {round(used, dp):g}")
+        detail = "; ".join(bits)
+        st.warning(f"**{t['extrap_h']}** — " + t["extrap"].format(detail=detail))
 
     if recal:
         st.info(

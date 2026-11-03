@@ -53,6 +53,17 @@ for c, b, md in zip(F["features"], F["beta_raw"], F["medians"]):
 check("12 个 β 与中位数一致", not bad, ", ".join(bad))
 
 check("变量顺序一致", G.ORDER == F["features"])
+
+cb = F.get("clip_bounds") or {}
+if cb:
+    bad_clip = []
+    for c in G.ORDER:
+        lo, hi = G.CLIP_BOUNDS[c]
+        if abs(lo - cb["lower"][c]) > 1e-6 or abs(hi - cb["upper"][c]) > 1e-6:
+            bad_clip.append(c)
+    check("12 个截断边界与 JSON 一致", not bad_clip, ", ".join(bad_clip))
+else:
+    check("JSON 含 clip_bounds", False, "缺少 clip_bounds")
 check("重校准斜率/截距一致",
       abs(G.RECAL_SLOPE - F["external_recalibration"]["slope"]) < 1e-9 and
       abs(G.RECAL_INTERCEPT - F["external_recalibration"]["intercept"]) < 1e-9)
@@ -70,10 +81,22 @@ CASES = [
 ]
 max_d = 0.0
 for d in CASES:
-    lp = IR + sum(B[k] * d[k] for k in G.ORDER)
+    # 参考值同样应用截断，与 predict() 的默认行为保持一致
+    dc = {k: min(max(d[k], G.CLIP_BOUNDS[k][0]), G.CLIP_BOUNDS[k][1]) for k in G.ORDER}
+    lp = IR + sum(B[k] * dc[k] for k in G.ORDER)
     ref = 1 / (1 + math.exp(-lp))
     max_d = max(max_d, abs(ref - G.predict(d)))
 check("3 个病例偏差 < 1e-12", max_d < 1e-12, f"max |Δp| = {max_d:.2e}")
+
+# 截断行为：极端输入必须被夹到边界，且概率有上限
+extreme = {k: 1e6 for k in G.ORDER}
+_, hit = G.clip_values(extreme)
+check("极端输入触发 12 个变量全部截断", len(hit) == 12, f"{len(hit)}/12")
+p_ext = G.predict(extreme)
+check("极端输入概率未被推到 100%", p_ext < 0.999, f"{p_ext * 100:.2f}%")
+mid = {k: (G.CLIP_BOUNDS[k][0] + G.CLIP_BOUNDS[k][1]) / 2 for k in G.ORDER}
+_, hit2 = G.clip_values(mid)
+check("区间中点不触发截断", len(hit2) == 0, f"{len(hit2)} 个")
 
 # ---------------------------------------------------------------- 3
 print("\n[3] gims12_calculator.html 内嵌 JS 系数")

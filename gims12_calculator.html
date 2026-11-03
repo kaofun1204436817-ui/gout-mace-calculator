@@ -130,29 +130,29 @@
 const INTERCEPT = 0.9532458692817674;
 const FEATURES = {
   anchor_age: {beta: 0.02878894641776687, med: 72.0,      lo: 18,  hi: 110, step: 1,
-               en: ["Age","years"], zh: ["年龄","岁"], p1: 38, p99: 91},
+               en: ["Age","years"], zh: ["年龄","岁"], p1: 38.0, p99: 91.0},
   gcs_total:  {beta: -0.08641588096859543, med: 13.0,     lo: 3,   hi: 15,  step: 1,
-               en: ["Total GCS","points"], zh: ["GCS 总分","分"], p1: 3, p99: 15},
+               en: ["Total GCS","points"], zh: ["GCS 总分","分"], p1: 3.0, p99: 15.0},
   sbp_mean:   {beta: -0.010406059075202326, med: 117.07846153846154, lo: 40, hi: 250, step: 1,
-               en: ["Mean systolic BP","mmHg"], zh: ["平均收缩压","mmHg"], p1: 88.8, p99: 163.6},
+               en: ["Mean systolic BP","mmHg"], zh: ["平均收缩压","mmHg"], p1: 88.824, p99: 163.5343},
   rr_mean:    {beta: 0.14391961702238834, med: 18.45833333333333, lo: 4, hi: 60, step: 0.5,
-               en: ["Mean respiratory rate","/min"], zh: ["平均呼吸频率","次/分"], p1: 12.3, p99: 30.0},
+               en: ["Mean respiratory rate","/min"], zh: ["平均呼吸频率","次/分"], p1: 12.3427, p99: 29.9567},
   spo2_mean:  {beta: -0.010188449279556748, med: 96.84,   lo: 50,  hi: 100, step: 0.5,
-               en: ["Mean SpO₂","%"], zh: ["平均血氧饱和度","%"], p1: 90.7, p99: 99.9},
+               en: ["Mean SpO₂","%"], zh: ["平均血氧饱和度","%"], p1: 90.7262, p99: 99.9244},
   bun:        {beta: 0.01979029682811435, med: 24.0,      lo: 1,   hi: 200, step: 1,
-               en: ["Blood urea nitrogen","mg/dL"], zh: ["尿素氮","mg/dL"], p1: 7, p99: 128},
+               en: ["Blood urea nitrogen","mg/dL"], zh: ["尿素氮","mg/dL"], p1: 7.0, p99: 126.96},
   creatinine: {beta: -0.09171027045479306, med: 1.2,      lo: 0.2, hi: 15,  step: 0.1,
-               en: ["Creatinine","mg/dL"], zh: ["肌酐","mg/dL"], p1: 0.5, p99: 9.8},
+               en: ["Creatinine","mg/dL"], zh: ["肌酐","mg/dL"], p1: 0.5, p99: 9.488},
   hemoglobin: {beta: -0.06760203341680782, med: 10.7,     lo: 3,   hi: 20,  step: 0.1,
-               en: ["Hemoglobin","g/dL"], zh: ["血红蛋白","g/dL"], p1: 6.1, p99: 16.0},
+               en: ["Hemoglobin","g/dL"], zh: ["血红蛋白","g/dL"], p1: 6.1, p99: 15.948},
   platelet:   {beta: -0.0015381213248293717, med: 175.0,  lo: 5,   hi: 800, step: 5,
-               en: ["Platelet count","×10⁹/L"], zh: ["血小板计数","×10⁹/L"], p1: 25.7, p99: 545},
+               en: ["Platelet count","×10⁹/L"], zh: ["血小板计数","×10⁹/L"], p1: 26.0, p99: 539.8},
   wbc:        {beta: 0.015027163685264883, med: 10.5,     lo: 0.5, hi: 80,  step: 0.1,
-               en: ["White cell count","×10⁹/L"], zh: ["白细胞计数","×10⁹/L"], p1: 1.9, p99: 36.7},
+               en: ["White cell count","×10⁹/L"], zh: ["白细胞计数","×10⁹/L"], p1: 1.952, p99: 35.4},
   calcium:    {beta: -0.03441238241793617, med: 8.5,      lo: 3,   hi: 15,  step: 0.1,
-               en: ["Calcium","mg/dL"], zh: ["血钙","mg/dL"], p1: 6.0, p99: 10.6},
+               en: ["Calcium","mg/dL"], zh: ["血钙","mg/dL"], p1: 6.152, p99: 10.6},
   chloride:   {beta: -0.04536416009409966, med: 105.0,    lo: 70,  hi: 140, step: 1,
-               en: ["Chloride","mmol/L"], zh: ["血氯","mmol/L"], p1: 88, p99: 118}
+               en: ["Chloride","mmol/L"], zh: ["血氯","mmol/L"], p1: 88.0, p99: 118.0}
 };
 const ORDER = ["anchor_age","gcs_total","sbp_mean","rr_mean","spo2_mean",
                "bun","creatinine","hemoglobin","platelet","wbc","calcium","chloride"];
@@ -173,7 +173,7 @@ const TXT = {
       contrib:"Variable contributions (logit, vs cohort median)",
       reset:"Reset to cohort median",
       perfnote:"The full 47-predictor XGBoost model reaches AUROC 0.812 internally and 0.748 externally. This twelve-variable score is the bedside approximation: it gives up 0.040 internally and 0.028 externally in exchange for twelve inputs available at the bedside.",
-      extrap:"Outside the derivation range: {n}. The score is a linear model and extrapolates without bound; treat this estimate as indicative only.",
+      extrap:"Extrapolation guard applied — {n}. The score is validated only between the 1st and 99th percentile of the derivation cohort, so values outside that range are clamped before the risk is computed; the displayed probability is the estimate at the boundary of the validated range.",
       foot:"<strong>Endpoint.</strong> In-hospital death occurring after the first 24 hours in the ICU. Patients who died within 24 hours are excluded from the denominator, so the score is conditional on surviving the predictor window.<br><br><strong>Population.</strong> Adults with an ICD-coded gout diagnosis admitted to an ICU; the derivation cohort excluded prior myocardial infarction, stroke or heart failure.<br><br><strong>External use.</strong> Only 61 events accrued externally and gout was identified by allopurinol prescription. Discrimination transported (AUROC 0.720) but the probability scale did not; recalibration is mandatory before any use outside the derivation setting.<br><br><strong>Not a medical device.</strong> Research and teaching only. Not a substitute for clinical judgement, and not to be used as the sole basis for any decision about an individual patient.",
       thm:"Metric", thd:"Derivation (MIMIC-IV, 5×5 CV)", the:"External (eICU-CRD)",
       slope:"Calibration slope", inter:"Calibration intercept", lang:"中文"},
@@ -185,7 +185,7 @@ const TXT = {
       contrib:"各变量贡献（logit，相对队列中位数）",
       reset:"恢复为队列中位数",
       perfnote:"47 变量 XGBoost 全模型内部 AUROC 0.812、外部 0.748。本 12 变量评分为床旁近似版：以内部 −0.040、外部 −0.028 的代价，换取 12 个床旁即可获得的输入。",
-      extrap:"以下变量超出推导队列范围：{n}。本评分为线性模型，外推无界，该估计仅供参考。",
+      extrap:"已启用外推保护 —— {n}。本评分仅在推导队列 1–99 百分位内验证，超出该范围的取值在计算前被截断，显示的概率是验证范围边界处的估计值。",
       foot:"<strong>终点定义。</strong> 入 ICU <strong>24 小时之后</strong>发生的院内死亡。24 小时内死亡者不进入分母，因此本评分以“度过预测窗”为条件。<br><br><strong>人群。</strong> ICU 收治且有 ICD 痛风诊断编码的成人；推导队列排除了既往心肌梗死、卒中或心力衰竭者。<br><br><strong>外部使用。</strong> 外部队列仅 61 例事件，痛风由别嘌醇处方界定。判别力可迁移（AUROC 0.720），但概率尺度不可直接使用，外部应用前必须重校准。<br><br><strong>非医疗器械。</strong> 仅供研究与教学，不替代临床判断，不得作为任何个体化决策的唯一依据。",
       thm:"指标", thd:"推导队列（MIMIC-IV，5×5 交叉验证）", the:"外部队列（eICU-CRD）",
       slope:"校准斜率", inter:"校准截距", lang:"English"}
@@ -224,9 +224,14 @@ function values(){
   return v;
 }
 
+function clampVal(k, x){
+  const f = FEATURES[k];
+  return Math.min(Math.max(x, f.p1), f.p99);
+}
+
 function lp(v){
   let s = INTERCEPT;
-  for (const k of ORDER) s += FEATURES[k].beta * v[k];
+  for (const k of ORDER) s += FEATURES[k].beta * clampVal(k, v[k]);
   return s;
 }
 
@@ -256,14 +261,18 @@ function update(){
   document.getElementById("bandobs").textContent =
     `   ${TXT[lang].obs}: ${(band.obs*100).toFixed(2)}% (n=${band.n}, ${band.ev} events)`;
 
-  const out = [];
+  const bits = [];
   for (const k of ORDER){
     const f = FEATURES[k];
-    if (v[k] < f.p1 || v[k] > f.p99) out.push(f[lang][0]);
+    if (v[k] < f.p1 || v[k] > f.p99){
+      const used = v[k] < f.p1 ? f.p1 : f.p99;
+      const dp = f.step >= 1 ? 0 : 1;
+      bits.push(`${f[lang][0]} ${v[k]} \u2192 ${Number(used.toFixed(dp))}`);
+    }
   }
   const note = document.getElementById("extrap");
-  if (out.length){
-    note.textContent = TXT[lang].extrap.replace("{n}", out.join(", "));
+  if (bits.length){
+    note.textContent = TXT[lang].extrap.replace("{n}", bits.join("; "));
     note.classList.add("show");
   } else {
     note.classList.remove("show");
