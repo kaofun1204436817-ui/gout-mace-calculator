@@ -1,70 +1,55 @@
 # -*- coding: utf-8 -*-
 """
-Streamlit 在线版：ICU 痛风患者住院期 MACE 风险计算器
-- 同一套 12 变量评分映射（与 Fig6 列线图 / HTML 计算器完全一致）
-- 运行：streamlit run streamlit_app.py
-- 部署：Streamlit Community Cloud（见 部署指南.md）
+Streamlit 在线版：ICU 痛风患者住院期 MACE 风险计算器 —— 已暂停
+
+状态：本在线工具已于 2026-11-03 暂停公开访问。
+原因：模型修订期间发现三项足以使在线工具不宜继续使用的问题——
+(1) 推导队列的用药变量原按整次住院提取，约 52% 处方记录落在 24 小时预测窗之后；
+(2) 慢性肾脏病变量曾混入急性肾损伤编码，而后者可能是结局的下游；
+(3) 修正后外部队列 AUROC 为 0.656，低于 0.70 的常规可用下限，且原始概率输出
+    的 Brier 技巧分为 −1.21（比常数患病率预测更差），必须本地重校准后才能解读。
+
+作者已按上述问题全流程重跑分析并修订稿件。在修订版完成同行评审之前，
+本项目不再提供任何在线风险计算服务。
+
+代码、数据管线与离线 HTML 实现（mace_risk_calculator.html）仍可在本仓库查阅，
+供研究复现与教学使用（非临床用途）。
 """
 import streamlit as st
-import numpy as np
 
-# ---- 评分映射（来自 nomogram_scoring.csv + nomogram_calibration.json，勿改） ----
-SCORING = [
-    ("anchor_age",     "Age (years)",            0.02231762577275091, 49.0,   89.0),
-    ("gcs_total",      "GCS total score",        -0.02592201998631502, 3.0,   15.0),
-    ("bun",            "BUN (mg/dL)",            0.011104160705409956, 10.0,  87.0),
-    ("rr_mean",        "Respiratory rate (/min)",0.05538890737490993, 14.08, 25.976),
-    ("chloride",       "Chloride (mmol/L)",      -0.058155600881078205, 94.0, 113.0),
-    ("hemoglobin",     "Hemoglobin (g/dL)",      0.1276690297688269,  7.3,   14.5),
-    ("wbc",            "WBC (10^9/L)",           -0.008182548702670529, 4.6, 22.8),
-    ("sbp_mean",       "Mean SBP (mmHg)",        0.0036106401389396463, 97.37, 150.52),
-    ("creatinine",     "Creatinine (mg/dL)",     -0.004488979411451294, 0.6,  5.0),
-    ("med_p2y12",      "P2Y12 inhibitor",        1.4407860487377,      0.0,  1.0),
-    ("med_diuretic",   "Diuretic use",           0.5435660628665044,  0.0,  1.0),
-    ("med_betablocker","Beta-blocker",           0.648381449054287,   0.0,  1.0),
-]
-CAL_CONST = -4.539222418164871
-CAL_COEF = 0.00686005800343645
+st.set_page_config(page_title="MACE Risk Calculator — Temporarily Paused", page_icon="⏸️", layout="centered")
 
-st.set_page_config(page_title="In-hospital MACE Risk — ICU Gout", page_icon="❤️", layout="centered")
 st.title("In-hospital MACE Risk Calculator")
-st.caption("ICU patients with gout · strict 6-event MACE (acute MI, new stroke, cardiogenic shock, malignant arrhythmia, acute heart failure, cardiac death)")
-st.caption("Derivation: MIMIC-IV (n=2,853, AUC 0.782) · External validation: eICU-CRD (n=962, AUC 0.673)")
-
-st.sidebar.header("Patient inputs (first 24 h in ICU)")
-values = {}
-for key, label, beta, lo, hi in SCORING:
-    if key.startswith("med_"):
-        values[key] = st.sidebar.selectbox(label, [0, 1], format_func=lambda v: "Yes" if v else "No")
-    else:
-        default = 70 if key == "anchor_age" else (14 if key == "gcs_total" else (25 if key == "bun" else 18.0))
-        values[key] = st.sidebar.number_input(label, value=float((lo + hi) / 2), step=None)
-
-if st.sidebar.button("Calculate risk", type="primary"):
-    total = 0.0
-    missing = [k for k, *_ in SCORING if values[k] is None]
-    if missing:
-        st.error("Missing inputs: " + ", ".join(missing))
-    else:
-        for key, label, beta, lo, hi in SCORING:
-            v = float(values[key])
-            if beta >= 0:
-                pts = max(0.0, min(1.0, (v - lo) / (hi - lo))) * 100
-            else:
-                pts = max(0.0, min(1.0, (hi - v) / (hi - lo))) * 100
-            total += pts
-        risk = 1.0 / (1.0 + np.exp(-(CAL_CONST + CAL_COEF * total)))
-        pct = risk * 100
-        st.markdown("---")
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Total points", f"{total:.0f}")
-        c2.metric("Predicted MACE risk", f"{pct:.1f}%")
-        cat = "Low" if risk < 0.25 else ("Intermediate" if risk < 0.45 else "High")
-        c3.metric("Risk category", cat)
-        st.progress(min(1.0, risk))
-        st.markdown("**Interpretation guide:** Low <25%, Intermediate 25–45%, High >45%. "
-                    "This is a risk-stratification aid for research use; it does not replace clinical judgment.")
+st.caption("ICU patients with gout")
 
 st.markdown("---")
-st.caption("Research use only. Model from: 'Predicting in-hospital major adverse cardiovascular events in critically ill patients with gout…' (EJMR submission). "
-           "Parameters identical to the paper's nomogram and bedside calculator.")
+st.warning("## ⏸️ 该在线计算器已暂停使用")
+
+st.markdown(
+    """
+**作者已决定下线该工具。** 在对模型做全面复核时，发现以下问题，其中任何一项都足以
+使在线公开发布的风险计算器在当前状态下不应当继续使用：
+
+1. **特征时间窗泄漏**：推导队列（MIMIC-IV）中，十个药物暴露变量原按整次住院聚合，
+   约 52% 的相关处方记录发生在入 ICU 后 24 小时窗之外，即可能记录于结局发生之后。
+   修订版已按入 ICU 前 6 小时至后 24 小时重新提取，内部 AUROC 由 0.782 降至 0.744。
+2. **合并症变量混入结局下游信息**：慢性肾脏病变量曾包含急性肾损伤编码，而急性肾损伤
+   本身可能是心源性休克或心血管事件的后果。修订版已将其拆分为仅慢性子类，急性肾损伤
+   单独成列且不进入预测集。
+3. **外部判别力低于可用阈值**：外部队列（eICU-CRD）AUROC 为 0.656，低于 0.70 的常规
+   可用下限；未重校准的原始概率输出，其 Brier 技巧分为 −1.21，即比"对每位患者都预测
+   队列患病率"更差。绝对概率必须在本地重校准后才可解读。
+
+作者团队已按上述发现修正研究并重新完成全部分析。**在修订版通过同行评审之前，
+本项目不再提供任何在线风险计算服务。**
+
+### 后续安排
+- 修订版模型、参数与重新验证结果将随稿件修订版公开发布。
+- 代码、数据管线与离线 HTML 计算器（`mace_risk_calculator.html`）仍可在本仓库查阅，
+  供研究复现与教学使用，不可用于临床决策。
+- 如需咨询或学术合作，请联系通讯作者。
+    """
+)
+
+st.markdown("---")
+st.caption("Research use only. Tool temporarily withdrawn pending model revision after peer review.")
