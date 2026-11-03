@@ -40,7 +40,8 @@ TXT = {
         ),
         "inputs": "Patient variables (first 24 h in ICU)",
         "result": "Predicted risk",
-        "risk_of": "probability of in-hospital death after the 24-hour window",
+        "risk_of": "Predicted probability",
+        "risk_cap": "of in-hospital death after the first 24 h in the ICU",
         "band": "Risk stratum",
         "band_help": "Quartiles of predicted risk in the derivation cohort.",
         "obs": "Observed event rate in this stratum",
@@ -73,7 +74,8 @@ TXT = {
         ),
         "inputs": "患者变量（入 ICU 后 24 小时内）",
         "result": "预测风险",
-        "risk_of": "入 ICU 24 小时后院内死亡的概率",
+        "risk_of": "预测概率",
+        "risk_cap": "入 ICU 24 小时后院内死亡",
         "band": "风险分层",
         "band_help": "按推导队列预测风险四分位划分。",
         "obs": "该层实测事件率",
@@ -152,6 +154,7 @@ with right:
     c1, c2 = st.columns([1, 1])
     with c1:
         st.metric(label=t["risk_of"], value=G.format_risk(p))
+        st.caption(t["risk_cap"])
     with c2:
         st.metric(label=t["band"], value=band["q"], help=t["band_help"])
         st.caption(f"{t['obs']}: **{band['observed'] * 100:.2f}%** "
