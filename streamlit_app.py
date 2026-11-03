@@ -48,11 +48,12 @@ TXT = {
         "set_dev": "Derivation setting (MIMIC-IV)",
         "set_ext": "Transport setting (eICU-derived recalibration)",
         "set_help": (
-            "The published model is calibrated on MIMIC-IV. When transported to a "
-            "different health system it over-predicts risk (calibration slope 0.50, "
-            "intercept −1.46). The second option applies that published "
-            "recalibration. It is derived from eICU-CRD and is provided for "
-            "transparency, not as a validated local mapping."
+            "The published model is calibrated on MIMIC-IV. Transported to a different "
+            "health system with inputs used as entered, its calibration slope is 0.50 "
+            "and intercept −1.46. Clamping inputs to the derivation range, which this "
+            "tool does, raises the slope to 0.74. The second option additionally applies "
+            "the published Platt mapping; it is derived from eICU-CRD and is provided "
+            "for transparency, not as a validated local mapping."
         ),
         "inputs": "Patient variables (first 24 h in ICU)",
         "result": "Predicted risk",
@@ -92,9 +93,10 @@ TXT = {
         "set_dev": "推导设定（MIMIC-IV）",
         "set_ext": "迁移设定（按 eICU 重校准）",
         "set_help": (
-            "发表模型按 MIMIC-IV 校准。迁移到其他医疗系统时会高估风险"
-            "（校准斜率 0.50，截距 −1.46）。第二项应用该重校准；"
-            "它由 eICU-CRD 导出，仅供透明披露，不等于本地已验证的映射。"
+            "发表模型按 MIMIC-IV 校准。迁移到其他医疗系统、输入原样使用时，"
+            "校准斜率为 0.50、截距 −1.46；本工具把输入截断到推导范围后斜率升至 0.74。"
+            "第二项在此之上再应用已发表的 Platt 映射；它由 eICU-CRD 导出，"
+            "仅供透明披露，不等于本地已验证的映射。"
         ),
         "inputs": "患者变量（入 ICU 后 24 小时内）",
         "result": "预测风险",
@@ -141,7 +143,7 @@ with st.sidebar:
         for k in G.ORDER:
             st.session_state[f"in_{k}"] = G.ui_default(k)
         st.rerun()
-    st.caption("GIMS-12 v1.0 · 2026-11")
+    st.caption(f"GIMS-12 v{G.VERSION} · 2026-11")
 
 st.title(t["title"])
 st.caption(t["sub"])
@@ -332,4 +334,4 @@ with st.expander(t["cite"]):
         language="text",
     )
 
-st.caption("GIMS-12 v1.0 · research use only · not a medical device")
+st.caption(f"GIMS-12 v{G.VERSION} · research use only · not a medical device")
