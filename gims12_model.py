@@ -9,7 +9,7 @@ Gout ICU Mortality Score, 12 variables — 24-hour post-window in-hospital death
 from math import exp
 
 MODEL_NAME = "GIMS-12"
-VERSION = "1.0"
+VERSION = "1.2"          # 1.2 起 predict() 默认截断到 CLIP_BOUNDS
 
 INTERCEPT = 0.9532458692817674
 

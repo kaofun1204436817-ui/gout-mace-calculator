@@ -17,6 +17,22 @@ import streamlit as st
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gims12_model as G  # noqa: E402
 
+# Streamlit re-runs this script inside a long-lived process, so a previously
+# imported gims12_model can stay cached in sys.modules after a redeploy and the
+# app would then call attributes that no longer exist. Compare the module
+# version and reload on mismatch.
+_REQUIRED_MODEL_VERSION = "1.2"
+if getattr(G, "VERSION", None) != _REQUIRED_MODEL_VERSION:
+    import importlib
+    G = importlib.reload(G)
+if getattr(G, "VERSION", None) != _REQUIRED_MODEL_VERSION:
+    st.error(
+        "The model module on disk is out of date (found version "
+        f"{getattr(G, 'VERSION', 'unknown')}, expected {_REQUIRED_MODEL_VERSION}). "
+        "Redeploy the app."
+    )
+    st.stop()
+
 st.set_page_config(
     page_title="GIMS-12 — 24-hour mortality risk in ICU patients with gout",
     page_icon="🫘",
