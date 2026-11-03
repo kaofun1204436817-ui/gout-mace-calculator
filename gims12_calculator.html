@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GIMS-12 — 24-hour mortality risk in ICU patients with gout</title>
+<style>
+  :root{
+    --ink:#16202a; --muted:#5b6875; --line:#d7dee5; --bg:#f6f8fa;
+    --main:#1f4e79; --red:#c0392b; --amber:#b7791f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",
+       "PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 60px}
+  header{border-bottom:2px solid var(--main);padding-bottom:14px;margin-bottom:22px;
+         display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  h1{font-size:21px;margin:0 0 4px;letter-spacing:-.2px}
+  .sub{color:var(--muted);font-size:13px}
+  .langbtn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 12px;
+           cursor:pointer;font-size:13px;color:var(--ink)}
+  .langbtn:hover{border-color:var(--main);color:var(--main)}
+  .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 18px 20px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+     margin:0 0 14px;font-weight:600}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+  @media(max-width:520px){.fields{grid-template-columns:1fr}}
+  label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:3px}
+  input[type=number]{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;
+    font-size:14px;font-variant-numeric:tabular-nums;background:#fff;color:var(--ink)}
+  input[type=number]:focus{outline:2px solid rgba(31,78,121,.25);border-color:var(--main)}
+  .res{text-align:center;padding:6px 0 2px}
+  .big{font-size:52px;font-weight:700;letter-spacing:-2px;line-height:1;color:var(--main);
+       font-variant-numeric:tabular-nums}
+  .big.warn{color:var(--red)}
+  .capt{font-size:12.5px;color:var(--muted);margin-top:8px}
+  .track{height:9px;background:#e8edf2;border-radius:5px;overflow:hidden;margin:16px 0 6px}
+  .fill{height:100%;width:0;background:var(--main);transition:width .25s ease}
+  .fill.hi{background:var(--red)}
+  .band{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+  .stratum{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;font-size:13.5px}
+  .stratum b{font-size:15px}
+  .note{margin-top:14px;font-size:12.5px;background:#fff8e6;border:1px solid #f0dfae;
+        border-radius:8px;padding:10px 12px;color:#6b5318;display:none}
+  .note.show{display:block}
+  .perf{margin-top:24px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+  td.num{font-variant-numeric:tabular-nums;text-align:right}
+  .foot{margin-top:26px;font-size:12px;color:var(--muted);line-height:1.6;
+        border-top:1px solid var(--line);padding-top:16px}
+  .foot strong{color:var(--ink)}
+  details{margin-top:14px;font-size:13px}
+  summary{cursor:pointer;color:var(--main);font-weight:600}
+  .contrib{font-size:12.5px;margin-top:10px}
+  .contrib div{display:flex;justify-content:space-between;padding:3px 0;
+               border-bottom:1px dotted var(--line)}
+  .pos{color:var(--red)} .neg{color:#1e7b45}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 12px;
+       cursor:pointer;font-size:12.5px;color:var(--muted)}
+  .btn:hover{border-color:var(--main);color:var(--main)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 id="t-title">GIMS-12 · 24-hour mortality risk</h1>
+      <div class="sub" id="t-sub">ICU patients with gout · in-hospital death after the first 24 hours</div>
+    </div>
+    <button class="langbtn" id="lang">中文</button>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2 id="t-inputs">Patient variables (first 24 h in ICU)</h2>
+      <div class="fields" id="fields"></div>
+      <div style="margin-top:12px"><button class="btn" id="reset">Reset to cohort median</button></div>
+    </section>
+
+    <section class="card">
+      <h2 id="t-result">Predicted risk</h2>
+      <div class="res">
+        <div class="big" id="risk">—</div>
+        <div class="capt" id="riskcap">probability of in-hospital death after the 24-hour window</div>
+      </div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <div class="band"><span>0%</span><span>50%</span><span>100%</span></div>
+      <div class="stratum">
+        <div id="t-stratum">Risk stratum</div>
+        <b id="bandq">—</b>
+        <span id="bandobs"></span>
+      </div>
+      <div class="note" id="extrap"></div>
+      <details>
+        <summary id="t-contrib">Variable contributions (logit)</summary>
+        <div class="contrib" id="contrib"></div>
+      </details>
+    </section>
+  </div>
+
+  <section class="card perf">
+    <h2 id="t-perf">Model performance</h2>
+    <table>
+      <thead>
+        <tr><th id="th-m">Metric</th>
+            <th style="text-align:right" id="th-d">Derivation (MIMIC-IV, 5×5 CV)</th>
+            <th style="text-align:right" id="th-e">External (eICU-CRD)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>AUROC (95% CI)</td><td class="num">0.771 (0.740–0.801)</td><td class="num">0.720 (0.650–0.787)</td></tr>
+        <tr><td>Brier score</td><td class="num">0.0707</td><td class="num">0.0645</td></tr>
+        <tr><td id="td-slope">Calibration slope</td><td class="num">1.000</td><td class="num">0.497</td></tr>
+        <tr><td id="td-int">Calibration intercept</td><td class="num">−0.002</td><td class="num">−1.461</td></tr>
+        <tr><td>Hosmer–Lemeshow P</td><td class="num">0.59</td><td class="num">—</td></tr>
+      </tbody>
+    </table>
+    <div class="capt" id="t-perfnote" style="margin-top:12px"></div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+/* ===== GIMS-12 model (single source of truth: gims12_model.py) ===== */
+const INTERCEPT = 0.9532458692817674;
+const FEATURES = {
+  anchor_age: {beta: 0.02878894641776687, med: 72.0,      lo: 18,  hi: 110, step: 1,
+               en: ["Age","years"], zh: ["年龄","岁"], p1: 38, p99: 91},
+  gcs_total:  {beta: -0.08641588096859543, med: 13.0,     lo: 3,   hi: 15,  step: 1,
+               en: ["Total GCS","points"], zh: ["GCS 总分","分"], p1: 3, p99: 15},
+  sbp_mean:   {beta: -0.010406059075202326, med: 117.07846153846154, lo: 40, hi: 250, step: 1,
+               en: ["Mean systolic BP","mmHg"], zh: ["平均收缩压","mmHg"], p1: 88.8, p99: 163.6},
+  rr_mean:    {beta: 0.14391961702238834, med: 18.45833333333333, lo: 4, hi: 60, step: 0.5,
+               en: ["Mean respiratory rate","/min"], zh: ["平均呼吸频率","次/分"], p1: 12.3, p99: 30.0},
+  spo2_mean:  {beta: -0.010188449279556748, med: 96.84,   lo: 50,  hi: 100, step: 0.5,
+               en: ["Mean SpO₂","%"], zh: ["平均血氧饱和度","%"], p1: 90.7, p99: 99.9},
+  bun:        {beta: 0.01979029682811435, med: 24.0,      lo: 1,   hi: 200, step: 1,
+               en: ["Blood urea nitrogen","mg/dL"], zh: ["尿素氮","mg/dL"], p1: 7, p99: 128},
+  creatinine: {beta: -0.09171027045479306, med: 1.2,      lo: 0.2, hi: 15,  step: 0.1,
+               en: ["Creatinine","mg/dL"], zh: ["肌酐","mg/dL"], p1: 0.5, p99: 9.8},
+  hemoglobin: {beta: -0.06760203341680782, med: 10.7,     lo: 3,   hi: 20,  step: 0.1,
+               en: ["Hemoglobin","g/dL"], zh: ["血红蛋白","g/dL"], p1: 6.1, p99: 16.0},
+  platelet:   {beta: -0.0015381213248293717, med: 175.0,  lo: 5,   hi: 800, step: 5,
+               en: ["Platelet count","×10⁹/L"], zh: ["血小板计数","×10⁹/L"], p1: 25.7, p99: 545},
+  wbc:        {beta: 0.015027163685264883, med: 10.5,     lo: 0.5, hi: 80,  step: 0.1,
+               en: ["White cell count","×10⁹/L"], zh: ["白细胞计数","×10⁹/L"], p1: 1.9, p99: 36.7},
+  calcium:    {beta: -0.03441238241793617, med: 8.5,      lo: 3,   hi: 15,  step: 0.1,
+               en: ["Calcium","mg/dL"], zh: ["血钙","mg/dL"], p1: 6.0, p99: 10.6},
+  chloride:   {beta: -0.04536416009409966, med: 105.0,    lo: 70,  hi: 140, step: 1,
+               en: ["Chloride","mmol/L"], zh: ["血氯","mmol/L"], p1: 88, p99: 118}
+};
+const ORDER = ["anchor_age","gcs_total","sbp_mean","rr_mean","spo2_mean",
+               "bun","creatinine","hemoglobin","platelet","wbc","calcium","chloride"];
+
+const BANDS = [
+  {q:"Q1", hi:0.0321, obs:0.0098, n:714, ev:7},
+  {q:"Q2", hi:0.0578, obs:0.0421, n:713, ev:30},
+  {q:"Q3", hi:0.1024, obs:0.0827, n:713, ev:59},
+  {q:"Q4", hi:1.0,    obs:0.2076, n:713, ev:148}
+];
+
+const TXT = {
+  en:{title:"GIMS-12 · 24-hour mortality risk",
+      sub:"ICU patients with gout · in-hospital death after the first 24 hours",
+      inputs:"Patient variables (first 24 h in ICU)", result:"Predicted risk",
+      cap:"probability of in-hospital death after the 24-hour window",
+      stratum:"Risk stratum", obs:"Observed event rate in this stratum",
+      contrib:"Variable contributions (logit, vs cohort median)",
+      reset:"Reset to cohort median",
+      perfnote:"The full 47-predictor XGBoost model reaches AUROC 0.812 internally and 0.748 externally. This twelve-variable score is the bedside approximation: it gives up 0.040 internally and 0.028 externally in exchange for twelve inputs available at the bedside.",
+      extrap:"Outside the derivation range: {n}. The score is a linear model and extrapolates without bound; treat this estimate as indicative only.",
+      foot:"<strong>Endpoint.</strong> In-hospital death occurring after the first 24 hours in the ICU. Patients who died within 24 hours are excluded from the denominator, so the score is conditional on surviving the predictor window.<br><br><strong>Population.</strong> Adults with an ICD-coded gout diagnosis admitted to an ICU; the derivation cohort excluded prior myocardial infarction, stroke or heart failure.<br><br><strong>External use.</strong> Only 61 events accrued externally and gout was identified by allopurinol prescription. Discrimination transported (AUROC 0.720) but the probability scale did not; recalibration is mandatory before any use outside the derivation setting.<br><br><strong>Not a medical device.</strong> Research and teaching only. Not a substitute for clinical judgement, and not to be used as the sole basis for any decision about an individual patient.",
+      thm:"Metric", thd:"Derivation (MIMIC-IV, 5×5 CV)", the:"External (eICU-CRD)",
+      slope:"Calibration slope", inter:"Calibration intercept", lang:"中文"},
+  zh:{title:"GIMS-12 · 24 小时死亡风险",
+      sub:"ICU 痛风患者 · 入 ICU 24 小时后院内死亡",
+      inputs:"患者变量（入 ICU 后 24 小时内）", result:"预测风险",
+      cap:"入 ICU 24 小时后院内死亡的概率",
+      stratum:"风险分层", obs:"该层实测事件率",
+      contrib:"各变量贡献（logit，相对队列中位数）",
+      reset:"恢复为队列中位数",
+      perfnote:"47 变量 XGBoost 全模型内部 AUROC 0.812、外部 0.748。本 12 变量评分为床旁近似版：以内部 −0.040、外部 −0.028 的代价，换取 12 个床旁即可获得的输入。",
+      extrap:"以下变量超出推导队列范围：{n}。本评分为线性模型，外推无界，该估计仅供参考。",
+      foot:"<strong>终点定义。</strong> 入 ICU <strong>24 小时之后</strong>发生的院内死亡。24 小时内死亡者不进入分母，因此本评分以“度过预测窗”为条件。<br><br><strong>人群。</strong> ICU 收治且有 ICD 痛风诊断编码的成人；推导队列排除了既往心肌梗死、卒中或心力衰竭者。<br><br><strong>外部使用。</strong> 外部队列仅 61 例事件，痛风由别嘌醇处方界定。判别力可迁移（AUROC 0.720），但概率尺度不可直接使用，外部应用前必须重校准。<br><br><strong>非医疗器械。</strong> 仅供研究与教学，不替代临床判断，不得作为任何个体化决策的唯一依据。",
+      thm:"指标", thd:"推导队列（MIMIC-IV，5×5 交叉验证）", the:"外部队列（eICU-CRD）",
+      slope:"校准斜率", inter:"校准截距", lang:"English"}
+};
+let lang = "en";
+
+function buildFields(){
+  const box = document.getElementById("fields");
+  box.innerHTML = "";
+  for (const k of ORDER){
+    const f = FEATURES[k];
+    const div = document.createElement("div");
+    div.innerHTML = `<label for="in_${k}">${f[lang][0]} (${f[lang][1]})</label>
+      <input type="number" id="in_${k}" min="${f.lo}" max="${f.hi}" step="${f.step}"
+             value="${roundUI(f.med, f.step)}">`;
+    box.appendChild(div);
+  }
+  for (const k of ORDER){
+    document.getElementById("in_"+k).addEventListener("input", update);
+  }
+}
+
+function roundUI(v, step){
+  if (step >= 1) return Math.round(v);
+  return Number(v.toFixed(step >= 0.1 ? 1 : 2));
+}
+
+function values(){
+  const v = {};
+  for (const k of ORDER){
+    const el = document.getElementById("in_"+k);
+    let x = parseFloat(el.value);
+    if (!isFinite(x)) x = FEATURES[k].med;
+    v[k] = x;
+  }
+  return v;
+}
+
+function lp(v){
+  let s = INTERCEPT;
+  for (const k of ORDER) s += FEATURES[k].beta * v[k];
+  return s;
+}
+
+function fmt(p){
+  if (p < 0.001) return "<0.1%";
+  if (p > 0.999) return ">99.9%";
+  return (p*100).toFixed(1) + "%";
+}
+
+function update(){
+  const v = values();
+  const s = lp(v);
+  const p = 1/(1+Math.exp(-s));
+
+  const riskEl = document.getElementById("risk");
+  riskEl.textContent = fmt(p);
+  const hi = p >= 0.1024;
+  riskEl.classList.toggle("warn", hi);
+
+  const fill = document.getElementById("fill");
+  fill.style.width = Math.min(100, p*100).toFixed(1) + "%";
+  fill.classList.toggle("hi", hi);
+
+  let band = BANDS[BANDS.length-1];
+  for (const b of BANDS){ if (p < b.hi){ band = b; break; } }
+  document.getElementById("bandq").textContent = band.q;
+  document.getElementById("bandobs").textContent =
+    `   ${TXT[lang].obs}: ${(band.obs*100).toFixed(2)}% (n=${band.n}, ${band.ev} events)`;
+
+  const out = [];
+  for (const k of ORDER){
+    const f = FEATURES[k];
+    if (v[k] < f.p1 || v[k] > f.p99) out.push(f[lang][0]);
+  }
+  const note = document.getElementById("extrap");
+  if (out.length){
+    note.textContent = TXT[lang].extrap.replace("{n}", out.join(", "));
+    note.classList.add("show");
+  } else {
+    note.classList.remove("show");
+  }
+
+  const rows = ORDER.map(k => {
+    const f = FEATURES[k];
+    return {lab: f[lang][0], d: f.beta*(v[k]-f.med), unit:f[lang][1], val:v[k], med:f.med};
+  }).sort((a,b) => Math.abs(b.d)-Math.abs(a.d));
+  document.getElementById("contrib").innerHTML = rows.map(r =>
+    `<div><span>${r.lab} — ${r.val} ${r.unit} <span style="color:#8a949e">(median ${roundUI(r.med,1)})</span></span>
+     <span class="${r.d>=0?'pos':'neg'}">${r.d>=0?'+':''}${r.d.toFixed(3)}</span></div>`).join("");
+}
+
+function applyLang(){
+  const t = TXT[lang];
+  document.getElementById("t-title").textContent = t.title;
+  document.getElementById("t-sub").textContent = t.sub;
+  document.getElementById("t-inputs").textContent = t.inputs;
+  document.getElementById("t-result").textContent = t.result;
+  document.getElementById("riskcap").textContent = t.cap;
+  document.getElementById("t-stratum").textContent = t.stratum;
+  document.getElementById("t-contrib").textContent = t.contrib;
+  document.getElementById("t-perf").textContent = lang==="en" ? "Model performance" : "模型性能";
+  document.getElementById("t-perfnote").textContent = t.perfnote;
+  document.getElementById("th-m").textContent = t.thm;
+  document.getElementById("th-d").textContent = t.thd;
+  document.getElementById("th-e").textContent = t.the;
+  document.getElementById("td-slope").textContent = t.slope;
+  document.getElementById("td-int").textContent = t.inter;
+  document.getElementById("foot").innerHTML = t.foot;
+  document.getElementById("reset").textContent = t.reset;
+  document.getElementById("lang").textContent = t.lang;
+  document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+  buildFields();
+  update();
+}
+
+document.getElementById("lang").addEventListener("click", () => {
+  lang = lang === "en" ? "zh" : "en";
+  applyLang();
+});
+document.getElementById("reset").addEventListener("click", () => {
+  for (const k of ORDER){
+    const f = FEATURES[k];
+    document.getElementById("in_"+k).value = roundUI(f.med, f.step);
+  }
+  update();
+});
+
+applyLang();
+</script>
+</body>
+</html>

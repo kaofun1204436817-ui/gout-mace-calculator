@@ -1,0 +1,196 @@
+variable,label,value,points
+anchor_age,Age (years),40.0,0.0
+anchor_age,Age (years),45.0,4.7
+anchor_age,Age (years),50.0,9.3
+anchor_age,Age (years),55.0,14.0
+anchor_age,Age (years),60.0,18.7
+anchor_age,Age (years),65.0,23.3
+anchor_age,Age (years),70.0,28.0
+anchor_age,Age (years),75.0,32.6
+anchor_age,Age (years),80.0,37.3
+anchor_age,Age (years),85.0,42.0
+anchor_age,Age (years),90.0,46.6
+anchor_age,Age (years),95.0,51.3
+gcs_total,Total GCS,3.0,33.6
+gcs_total,Total GCS,4.0,30.8
+gcs_total,Total GCS,5.0,28.0
+gcs_total,Total GCS,6.0,25.2
+gcs_total,Total GCS,7.0,22.4
+gcs_total,Total GCS,8.0,19.6
+gcs_total,Total GCS,9.0,16.8
+gcs_total,Total GCS,10.0,14.0
+gcs_total,Total GCS,11.0,11.2
+gcs_total,Total GCS,12.0,8.4
+gcs_total,Total GCS,13.0,5.6
+gcs_total,Total GCS,14.0,2.8
+gcs_total,Total GCS,15.0,0.0
+sbp_mean,Mean systolic BP (mmHg),70.0,30.3
+sbp_mean,Mean systolic BP (mmHg),80.0,27.0
+sbp_mean,Mean systolic BP (mmHg),90.0,23.6
+sbp_mean,Mean systolic BP (mmHg),100.0,20.2
+sbp_mean,Mean systolic BP (mmHg),110.0,16.9
+sbp_mean,Mean systolic BP (mmHg),120.0,13.5
+sbp_mean,Mean systolic BP (mmHg),130.0,10.1
+sbp_mean,Mean systolic BP (mmHg),140.0,6.7
+sbp_mean,Mean systolic BP (mmHg),150.0,3.4
+sbp_mean,Mean systolic BP (mmHg),160.0,0.0
+rr_mean,Mean respiratory rate (/min),10.0,0.0
+rr_mean,Mean respiratory rate (/min),12.0,9.3
+rr_mean,Mean respiratory rate (/min),14.0,18.7
+rr_mean,Mean respiratory rate (/min),16.0,28.0
+rr_mean,Mean respiratory rate (/min),18.0,37.3
+rr_mean,Mean respiratory rate (/min),20.0,46.6
+rr_mean,Mean respiratory rate (/min),22.0,56.0
+rr_mean,Mean respiratory rate (/min),24.0,65.3
+rr_mean,Mean respiratory rate (/min),26.0,74.6
+rr_mean,Mean respiratory rate (/min),28.0,83.9
+rr_mean,Mean respiratory rate (/min),30.0,93.3
+rr_mean,Mean respiratory rate (/min),32.0,102.6
+spo2_mean,Mean SpO$_2$ (%),85.0,5.0
+spo2_mean,Mean SpO$_2$ (%),86.0,4.6
+spo2_mean,Mean SpO$_2$ (%),87.0,4.3
+spo2_mean,Mean SpO$_2$ (%),88.0,4.0
+spo2_mean,Mean SpO$_2$ (%),89.0,3.6
+spo2_mean,Mean SpO$_2$ (%),90.0,3.3
+spo2_mean,Mean SpO$_2$ (%),91.0,3.0
+spo2_mean,Mean SpO$_2$ (%),92.0,2.6
+spo2_mean,Mean SpO$_2$ (%),93.0,2.3
+spo2_mean,Mean SpO$_2$ (%),94.0,2.0
+spo2_mean,Mean SpO$_2$ (%),95.0,1.7
+spo2_mean,Mean SpO$_2$ (%),96.0,1.3
+spo2_mean,Mean SpO$_2$ (%),97.0,1.0
+spo2_mean,Mean SpO$_2$ (%),98.0,0.7
+spo2_mean,Mean SpO$_2$ (%),99.0,0.3
+spo2_mean,Mean SpO$_2$ (%),100.0,0.0
+bun,Blood urea nitrogen (mg/dL),5.0,0.0
+bun,Blood urea nitrogen (mg/dL),10.0,3.2
+bun,Blood urea nitrogen (mg/dL),15.0,6.4
+bun,Blood urea nitrogen (mg/dL),20.0,9.6
+bun,Blood urea nitrogen (mg/dL),25.0,12.8
+bun,Blood urea nitrogen (mg/dL),30.0,16.0
+bun,Blood urea nitrogen (mg/dL),35.0,19.2
+bun,Blood urea nitrogen (mg/dL),40.0,22.4
+bun,Blood urea nitrogen (mg/dL),45.0,25.6
+bun,Blood urea nitrogen (mg/dL),50.0,28.9
+bun,Blood urea nitrogen (mg/dL),55.0,32.1
+bun,Blood urea nitrogen (mg/dL),60.0,35.3
+bun,Blood urea nitrogen (mg/dL),65.0,38.5
+bun,Blood urea nitrogen (mg/dL),70.0,41.7
+bun,Blood urea nitrogen (mg/dL),75.0,44.9
+bun,Blood urea nitrogen (mg/dL),80.0,48.1
+bun,Blood urea nitrogen (mg/dL),85.0,51.3
+bun,Blood urea nitrogen (mg/dL),90.0,54.5
+creatinine,Creatinine (mg/dL),0.4,13.7
+creatinine,Creatinine (mg/dL),0.6,13.1
+creatinine,Creatinine (mg/dL),0.8,12.5
+creatinine,Creatinine (mg/dL),1.0,11.9
+creatinine,Creatinine (mg/dL),1.2,11.3
+creatinine,Creatinine (mg/dL),1.4,10.7
+creatinine,Creatinine (mg/dL),1.6,10.1
+creatinine,Creatinine (mg/dL),1.8,9.5
+creatinine,Creatinine (mg/dL),2.0,8.9
+creatinine,Creatinine (mg/dL),2.2,8.3
+creatinine,Creatinine (mg/dL),2.4,7.7
+creatinine,Creatinine (mg/dL),2.6,7.1
+creatinine,Creatinine (mg/dL),2.8,6.5
+creatinine,Creatinine (mg/dL),3.0,5.9
+creatinine,Creatinine (mg/dL),3.2,5.3
+creatinine,Creatinine (mg/dL),3.4,4.8
+creatinine,Creatinine (mg/dL),3.6,4.2
+creatinine,Creatinine (mg/dL),3.8,3.6
+creatinine,Creatinine (mg/dL),4.0,3.0
+creatinine,Creatinine (mg/dL),4.2,2.4
+creatinine,Creatinine (mg/dL),4.4,1.8
+creatinine,Creatinine (mg/dL),4.6,1.2
+creatinine,Creatinine (mg/dL),4.8,0.6
+creatinine,Creatinine (mg/dL),5.0,-0.0
+hemoglobin,Hemoglobin (g/dL),7.0,19.7
+hemoglobin,Hemoglobin (g/dL),8.0,17.5
+hemoglobin,Hemoglobin (g/dL),9.0,15.3
+hemoglobin,Hemoglobin (g/dL),10.0,13.1
+hemoglobin,Hemoglobin (g/dL),11.0,11.0
+hemoglobin,Hemoglobin (g/dL),12.0,8.8
+hemoglobin,Hemoglobin (g/dL),13.0,6.6
+hemoglobin,Hemoglobin (g/dL),14.0,4.4
+hemoglobin,Hemoglobin (g/dL),15.0,2.2
+hemoglobin,Hemoglobin (g/dL),16.0,0.0
+platelet,Platelet count (×10⁹/L),40.0,17.9
+platelet,Platelet count (×10⁹/L),60.0,16.9
+platelet,Platelet count (×10⁹/L),80.0,15.9
+platelet,Platelet count (×10⁹/L),100.0,14.9
+platelet,Platelet count (×10⁹/L),120.0,14.0
+platelet,Platelet count (×10⁹/L),140.0,13.0
+platelet,Platelet count (×10⁹/L),160.0,12.0
+platelet,Platelet count (×10⁹/L),180.0,11.0
+platelet,Platelet count (×10⁹/L),200.0,10.0
+platelet,Platelet count (×10⁹/L),220.0,9.0
+platelet,Platelet count (×10⁹/L),240.0,8.0
+platelet,Platelet count (×10⁹/L),260.0,7.0
+platelet,Platelet count (×10⁹/L),280.0,6.0
+platelet,Platelet count (×10⁹/L),300.0,5.0
+platelet,Platelet count (×10⁹/L),320.0,4.0
+platelet,Platelet count (×10⁹/L),340.0,3.0
+platelet,Platelet count (×10⁹/L),360.0,2.0
+platelet,Platelet count (×10⁹/L),380.0,1.0
+platelet,Platelet count (×10⁹/L),400.0,0.0
+wbc,White cell count (×10⁹/L),3.0,0.0
+wbc,White cell count (×10⁹/L),4.0,0.5
+wbc,White cell count (×10⁹/L),5.0,1.0
+wbc,White cell count (×10⁹/L),6.0,1.5
+wbc,White cell count (×10⁹/L),7.0,1.9
+wbc,White cell count (×10⁹/L),8.0,2.4
+wbc,White cell count (×10⁹/L),9.0,2.9
+wbc,White cell count (×10⁹/L),10.0,3.4
+wbc,White cell count (×10⁹/L),11.0,3.9
+wbc,White cell count (×10⁹/L),12.0,4.4
+wbc,White cell count (×10⁹/L),13.0,4.9
+wbc,White cell count (×10⁹/L),14.0,5.4
+wbc,White cell count (×10⁹/L),15.0,5.8
+wbc,White cell count (×10⁹/L),16.0,6.3
+wbc,White cell count (×10⁹/L),17.0,6.8
+wbc,White cell count (×10⁹/L),18.0,7.3
+wbc,White cell count (×10⁹/L),19.0,7.8
+wbc,White cell count (×10⁹/L),20.0,8.3
+wbc,White cell count (×10⁹/L),21.0,8.8
+wbc,White cell count (×10⁹/L),22.0,9.3
+wbc,White cell count (×10⁹/L),23.0,9.7
+wbc,White cell count (×10⁹/L),24.0,10.2
+wbc,White cell count (×10⁹/L),25.0,10.7
+wbc,White cell count (×10⁹/L),26.0,11.2
+wbc,White cell count (×10⁹/L),27.0,11.7
+wbc,White cell count (×10⁹/L),28.0,12.2
+wbc,White cell count (×10⁹/L),29.0,12.7
+wbc,White cell count (×10⁹/L),30.0,13.1
+calcium,Calcium (mg/dL),6.5,4.5
+calcium,Calcium (mg/dL),7.0,3.9
+calcium,Calcium (mg/dL),7.5,3.3
+calcium,Calcium (mg/dL),8.0,2.8
+calcium,Calcium (mg/dL),8.5,2.2
+calcium,Calcium (mg/dL),9.0,1.7
+calcium,Calcium (mg/dL),9.5,1.1
+calcium,Calcium (mg/dL),10.0,0.6
+calcium,Calcium (mg/dL),10.5,0.0
+chloride,Chloride (mmol/L),95.0,33.8
+chloride,Chloride (mmol/L),96.0,32.3
+chloride,Chloride (mmol/L),97.0,30.9
+chloride,Chloride (mmol/L),98.0,29.4
+chloride,Chloride (mmol/L),99.0,27.9
+chloride,Chloride (mmol/L),100.0,26.5
+chloride,Chloride (mmol/L),101.0,25.0
+chloride,Chloride (mmol/L),102.0,23.5
+chloride,Chloride (mmol/L),103.0,22.0
+chloride,Chloride (mmol/L),104.0,20.6
+chloride,Chloride (mmol/L),105.0,19.1
+chloride,Chloride (mmol/L),106.0,17.6
+chloride,Chloride (mmol/L),107.0,16.2
+chloride,Chloride (mmol/L),108.0,14.7
+chloride,Chloride (mmol/L),109.0,13.2
+chloride,Chloride (mmol/L),110.0,11.8
+chloride,Chloride (mmol/L),111.0,10.3
+chloride,Chloride (mmol/L),112.0,8.8
+chloride,Chloride (mmol/L),113.0,7.3
+chloride,Chloride (mmol/L),114.0,5.9
+chloride,Chloride (mmol/L),115.0,4.4
+chloride,Chloride (mmol/L),116.0,2.9
+chloride,Chloride (mmol/L),117.0,1.5
+chloride,Chloride (mmol/L),118.0,0.0

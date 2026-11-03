@@ -1,0 +1,197 @@
+{
+  "name": "Gout-ICU 24-hour mortality score (GIMS-12)",
+  "version": "1.0 (2026-11-03)",
+  "endpoint": "In-hospital death occurring after the first 24 h in the ICU",
+  "cohort": "ICU patients with gout (MIMIC-IV derivation; eICU-CRD external)",
+  "features": [
+    "anchor_age",
+    "gcs_total",
+    "sbp_mean",
+    "rr_mean",
+    "spo2_mean",
+    "bun",
+    "creatinine",
+    "hemoglobin",
+    "platelet",
+    "wbc",
+    "calcium",
+    "chloride"
+  ],
+  "labels": [
+    "Age (years)",
+    "Total GCS",
+    "Mean systolic BP (mmHg)",
+    "Mean respiratory rate (/min)",
+    "Mean SpO2 (%)",
+    "Blood urea nitrogen (mg/dL)",
+    "Creatinine (mg/dL)",
+    "Hemoglobin (g/dL)",
+    "Platelet (×10⁹/L)",
+    "White cell count (×10⁹/L)",
+    "Calcium (mg/dL)",
+    "Chloride (mmol/L)"
+  ],
+  "units": [
+    "years",
+    "points",
+    "mmHg",
+    "/min",
+    "%",
+    "mg/dL",
+    "mg/dL",
+    "g/dL",
+    "×10⁹/L",
+    "×10⁹/L",
+    "mg/dL",
+    "mmol/L"
+  ],
+  "medians": [
+    72.0,
+    13.0,
+    117.07846153846154,
+    18.45833333333333,
+    96.84,
+    24.0,
+    1.2,
+    10.7,
+    175.0,
+    10.5,
+    8.5,
+    105.0
+  ],
+  "means": [
+    70.40448650543287,
+    10.257273045916579,
+    119.53847024041437,
+    19.08998107980564,
+    96.73001719481925,
+    32.57833859095689,
+    1.7588853838065195,
+    10.727795303189625,
+    189.577637574483,
+    11.965124430424115,
+    8.456501927795303,
+    104.39291973361374
+  ],
+  "sds": [
+    12.239078016540434,
+    5.0893578987968615,
+    16.26111239976843,
+    3.6683242321464857,
+    2.4079873512670416,
+    24.88736450060174,
+    1.7810986475771515,
+    2.201898762589456,
+    93.25837092766396,
+    8.875113973801072,
+    0.7986037344795225,
+    6.140558794838651
+  ],
+  "beta_raw": [
+    0.02878894641776687,
+    -0.08641588096859543,
+    -0.010406059075202326,
+    0.14391961702238834,
+    -0.010188449279556748,
+    0.01979029682811435,
+    -0.09171027045479306,
+    -0.06760203341680782,
+    -0.0015381213248293717,
+    0.015027163685264883,
+    -0.03441238241793617,
+    -0.04536416009409966
+  ],
+  "beta_std": [
+    0.35235016122105095,
+    -0.43980134638901053,
+    -0.16921409626049533,
+    0.527943818604469,
+    -0.02453365699419845,
+    0.4925283307363843,
+    -0.16334503867596672,
+    -0.14885283372900018,
+    -0.14344268904268745,
+    0.13336779040969038,
+    -0.027481857111301286,
+    -0.2785612922362922
+  ],
+  "intercept_raw": 0.9532458692817674,
+  "intercept_std": -2.7685955842700376,
+  "C": 0.1,
+  "external_recalibration": {
+    "slope": 0.4973,
+    "intercept": -1.461,
+    "note": "Apply as lp' = slope*lp + intercept when transporting to a different health system; fitted on eICU-CRD."
+  },
+  "performance": {
+    "internal_auroc": 0.7712,
+    "internal_ci": [
+      0.7395,
+      0.8008
+    ],
+    "external_auroc": 0.7195,
+    "external_ci": [
+      0.6504,
+      0.7867
+    ],
+    "internal_brier": 0.0707,
+    "external_brier": 0.0645,
+    "internal_skill": 0.096,
+    "external_skill": -0.087,
+    "internal_cal_slope": 1.0,
+    "internal_cal_intercept": -0.002,
+    "external_cal_slope": 0.497,
+    "external_cal_intercept": -1.461,
+    "internal_hl_p": 0.588,
+    "external_hl_p": 0.0,
+    "external_brier_recalibrated": 0.0577,
+    "external_skill_recalibrated": 0.028
+  },
+  "risk_bands": [
+    {
+      "quartile": "Q1",
+      "n": 714,
+      "events": 7,
+      "observed_rate": 0.0098,
+      "pred_lo": 0.0024,
+      "pred_hi": 0.0321,
+      "pred_mean": 0.0196
+    },
+    {
+      "quartile": "Q2",
+      "n": 713,
+      "events": 30,
+      "observed_rate": 0.0421,
+      "pred_lo": 0.0322,
+      "pred_hi": 0.0578,
+      "pred_mean": 0.0445
+    },
+    {
+      "quartile": "Q3",
+      "n": 713,
+      "events": 59,
+      "observed_rate": 0.0827,
+      "pred_lo": 0.0579,
+      "pred_hi": 0.1024,
+      "pred_mean": 0.0766
+    },
+    {
+      "quartile": "Q4",
+      "n": 713,
+      "events": 148,
+      "observed_rate": 0.2076,
+      "pred_lo": 0.1024,
+      "pred_hi": 0.97,
+      "pred_mean": 0.2014
+    }
+  ],
+  "n_derivation": 2853,
+  "events_derivation": 244,
+  "n_external": 962,
+  "events_external": 61,
+  "full_model": {
+    "internal_auroc": 0.8117,
+    "external_auroc": 0.7476,
+    "n_features": 47
+  }
+}

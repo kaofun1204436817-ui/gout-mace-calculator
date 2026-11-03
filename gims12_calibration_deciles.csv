@@ -1,0 +1,21 @@
+dataset,decile,n,predicted,observed
+"Derivation (MIMIC-IV, OOF)",1,286,0.0122,0.0105
+"Derivation (MIMIC-IV, OOF)",2,285,0.0227,0.007
+"Derivation (MIMIC-IV, OOF)",3,285,0.0326,0.0386
+"Derivation (MIMIC-IV, OOF)",4,285,0.0422,0.0491
+"Derivation (MIMIC-IV, OOF)",5,286,0.0525,0.042
+"Derivation (MIMIC-IV, OOF)",6,285,0.065,0.0667
+"Derivation (MIMIC-IV, OOF)",7,285,0.0799,0.0912
+"Derivation (MIMIC-IV, OOF)",8,285,0.1018,0.0842
+"Derivation (MIMIC-IV, OOF)",9,285,0.1414,0.1404
+"Derivation (MIMIC-IV, OOF)",10,286,0.3054,0.3252
+External (eICU-CRD),1,97,0.0094,0.0206
+External (eICU-CRD),2,96,0.0186,0.0312
+External (eICU-CRD),3,96,0.0261,0.0208
+External (eICU-CRD),4,96,0.0338,0.0312
+External (eICU-CRD),5,96,0.0428,0.0417
+External (eICU-CRD),6,96,0.0569,0.0104
+External (eICU-CRD),7,96,0.0755,0.0521
+External (eICU-CRD),8,96,0.1054,0.125
+External (eICU-CRD),9,96,0.1557,0.125
+External (eICU-CRD),10,97,0.4014,0.1753
