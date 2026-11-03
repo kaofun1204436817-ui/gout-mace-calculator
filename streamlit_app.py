@@ -52,7 +52,9 @@ TXT = {
             "The full 47-predictor XGBoost model reaches AUROC 0.812 internally and "
             "0.748 externally. This twelve-variable score is the bedside approximation; "
             "it gives up 0.040 internally and 0.028 externally in exchange for twelve "
-            "inputs that are available at the bedside."
+            "inputs that are available at the bedside. External calibration failed when "
+            "inputs were used as entered (slope 0.497); clamping them to the derivation "
+            "range, which this tool does, recovers most of it (slope 0.740)."
         ),
         "disc": "Limitations and intended use",
         "cite": "Citation",
@@ -62,6 +64,10 @@ TXT = {
                    "clamped before the risk is computed and the displayed probability is the "
                    "estimate at the boundary of the validated range."),
         "extrap_h": "Extrapolation guard applied",
+        "perf_cols": ["Metric", "Derivation (MIMIC-IV, 5×5 CV)",
+                      "External, as computed", "External, clamped (this tool)"],
+        "perf_rows": ["AUROC", "Brier score", "Brier skill score", "Calibration slope",
+                      "Calibration intercept", "Hosmer–Lemeshow P"],
     },
     "zh": {
         "title": "GIMS-12 · 24 小时死亡风险",
@@ -87,7 +93,8 @@ TXT = {
         "perf_note": (
             "47 变量 XGBoost 全模型内部 AUROC 0.812、外部 0.748。"
             "本 12 变量评分为床旁近似版：以内部 −0.040、外部 −0.028 的代价，"
-            "换取 12 个床旁即可获得的输入。"
+            "换取 12 个床旁即可获得的输入。外部校准在输入原样使用时失败（斜率 0.497）；"
+            "本工具把输入截断到推导范围后，大部分失校准被纠正（斜率 0.740）。"
         ),
         "disc": "局限与用途",
         "cite": "引用",
@@ -95,6 +102,9 @@ TXT = {
         "extrap": ("{detail}。本评分仅在推导队列 1–99 百分位内验证，超出该范围的取值"
                    "在计算前被截断，显示的概率是验证范围边界处的估计值。"),
         "extrap_h": "已启用外推保护",
+        "perf_cols": ["指标", "推导（MIMIC-IV，5×5 CV）", "外部（原样计算）", "外部（截断后，本工具）"],
+        "perf_rows": ["AUROC", "Brier 分数", "Brier 技巧分", "校准斜率",
+                      "校准截距", "Hosmer–Lemeshow P"],
     },
 }
 
@@ -220,19 +230,29 @@ with right:
 st.divider()
 st.subheader(t["perf"])
 P = G.PERFORMANCE
+_c0, _c1, _c2, _c3 = t["perf_cols"]
 perf_tbl = {
-    "Metric": ["AUROC (95% CI)", "Brier score", "Calibration slope", "Calibration intercept",
-               "Hosmer–Lemeshow P"],
-    "Derivation (MIMIC-IV, 5×5 CV)": [
+    _c0: t["perf_rows"],
+    _c1: [
         f"{P['internal_auroc']:.3f} ({P['internal_ci'][0]:.3f}–{P['internal_ci'][1]:.3f})",
         f"{P['internal_brier']:.4f}",
+        f"{P['internal_skill']:+.3f}",
         f"{P['internal_cal_slope']:.3f}",
         f"{P['internal_cal_intercept']:+.3f}",
         f"{P['internal_hl_p']:.2f}",
     ],
-    "External (eICU-CRD)": [
-        f"{P['external_auroc']:.3f} ({P['external_ci'][0]:.3f}–{P['external_ci'][1]:.3f})",
+    _c2: [
+        f"{P['external_auroc_raw']:.3f} ({P['external_ci'][0]:.3f}–{P['external_ci'][1]:.3f})",
+        f"{P['external_brier_raw']:.4f}",
+        f"{P['external_skill_raw']:+.3f}",
+        f"{P['external_cal_slope_raw']:.3f}",
+        f"{P['external_cal_intercept_raw']:+.3f}",
+        "<0.001",
+    ],
+    _c3: [
+        f"{P['external_auroc']:.3f}",
         f"{P['external_brier']:.4f}",
+        f"{P['external_skill']:+.3f}",
         f"{P['external_cal_slope']:.3f}",
         f"{P['external_cal_intercept']:+.3f}",
         "—",

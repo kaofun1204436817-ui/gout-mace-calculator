@@ -109,14 +109,16 @@
       <thead>
         <tr><th id="th-m">Metric</th>
             <th style="text-align:right" id="th-d">Derivation (MIMIC-IV, 5×5 CV)</th>
-            <th style="text-align:right" id="th-e">External (eICU-CRD)</th></tr>
+            <th style="text-align:right" id="th-r">External, as computed</th>
+            <th style="text-align:right" id="th-c">External, clamped</th></tr>
       </thead>
       <tbody>
-        <tr><td>AUROC (95% CI)</td><td class="num">0.771 (0.740–0.801)</td><td class="num">0.720 (0.650–0.787)</td></tr>
-        <tr><td>Brier score</td><td class="num">0.0707</td><td class="num">0.0645</td></tr>
-        <tr><td id="td-slope">Calibration slope</td><td class="num">1.000</td><td class="num">0.497</td></tr>
-        <tr><td id="td-int">Calibration intercept</td><td class="num">−0.002</td><td class="num">−1.461</td></tr>
-        <tr><td>Hosmer–Lemeshow P</td><td class="num">0.59</td><td class="num">—</td></tr>
+        <tr><td>AUROC</td><td class="num">0.771 (0.740–0.801)</td><td class="num">0.718</td><td class="num">0.723</td></tr>
+        <tr><td>Brier score</td><td class="num">0.0707</td><td class="num">0.0647</td><td class="num">0.0582</td></tr>
+        <tr><td id="td-skill">Brier skill score</td><td class="num">+0.096</td><td class="num">−0.090</td><td class="num">+0.020</td></tr>
+        <tr><td id="td-slope">Calibration slope</td><td class="num">1.000</td><td class="num">0.497</td><td class="num">0.740</td></tr>
+        <tr><td id="td-int">Calibration intercept</td><td class="num">−0.002</td><td class="num">−1.461</td><td class="num">−0.830</td></tr>
+        <tr><td>Hosmer–Lemeshow P</td><td class="num">0.59</td><td class="num">&lt;0.001</td><td class="num">—</td></tr>
       </tbody>
     </table>
     <div class="capt" id="t-perfnote" style="margin-top:12px"></div>
@@ -172,10 +174,11 @@ const TXT = {
       stratum:"Risk stratum", obs:"Observed event rate in this stratum",
       contrib:"Variable contributions (logit, vs cohort median)",
       reset:"Reset to cohort median",
-      perfnote:"The full 47-predictor XGBoost model reaches AUROC 0.812 internally and 0.748 externally. This twelve-variable score is the bedside approximation: it gives up 0.040 internally and 0.028 externally in exchange for twelve inputs available at the bedside.",
+      perfnote:"The full 47-predictor XGBoost model reaches AUROC 0.812 internally and 0.748 externally. This twelve-variable score is the bedside approximation: it gives up 0.040 internally and 0.028 externally in exchange for twelve inputs available at the bedside. External calibration failed when inputs were used as entered (slope 0.497); clamping them to the derivation range, which this page does, recovers most of it (slope 0.740).",
       extrap:"Extrapolation guard applied — {n}. The score is validated only between the 1st and 99th percentile of the derivation cohort, so values outside that range are clamped before the risk is computed; the displayed probability is the estimate at the boundary of the validated range.",
       foot:"<strong>Endpoint.</strong> In-hospital death occurring after the first 24 hours in the ICU. Patients who died within 24 hours are excluded from the denominator, so the score is conditional on surviving the predictor window.<br><br><strong>Population.</strong> Adults with an ICD-coded gout diagnosis admitted to an ICU; the derivation cohort excluded prior myocardial infarction, stroke or heart failure.<br><br><strong>External use.</strong> Only 61 events accrued externally and gout was identified by allopurinol prescription. Discrimination transported (AUROC 0.720) but the probability scale did not; recalibration is mandatory before any use outside the derivation setting.<br><br><strong>Not a medical device.</strong> Research and teaching only. Not a substitute for clinical judgement, and not to be used as the sole basis for any decision about an individual patient.",
-      thm:"Metric", thd:"Derivation (MIMIC-IV, 5×5 CV)", the:"External (eICU-CRD)",
+      thm:"Metric", thd:"Derivation (MIMIC-IV, 5×5 CV)", the:"External, as computed",
+      thc:"External, clamped", skill:"Brier skill score",
       slope:"Calibration slope", inter:"Calibration intercept", lang:"中文"},
   zh:{title:"GIMS-12 · 24 小时死亡风险",
       sub:"ICU 痛风患者 · 入 ICU 24 小时后院内死亡",
@@ -184,10 +187,11 @@ const TXT = {
       stratum:"风险分层", obs:"该层实测事件率",
       contrib:"各变量贡献（logit，相对队列中位数）",
       reset:"恢复为队列中位数",
-      perfnote:"47 变量 XGBoost 全模型内部 AUROC 0.812、外部 0.748。本 12 变量评分为床旁近似版：以内部 −0.040、外部 −0.028 的代价，换取 12 个床旁即可获得的输入。",
+      perfnote:"47 变量 XGBoost 全模型内部 AUROC 0.812、外部 0.748。本 12 变量评分为床旁近似版：以内部 −0.040、外部 −0.028 的代价，换取 12 个床旁即可获得的输入。外部校准在输入原样使用时失败（斜率 0.497）；本页把输入截断到推导范围后，大部分失校准被纠正（斜率 0.740）。",
       extrap:"已启用外推保护 —— {n}。本评分仅在推导队列 1–99 百分位内验证，超出该范围的取值在计算前被截断，显示的概率是验证范围边界处的估计值。",
       foot:"<strong>终点定义。</strong> 入 ICU <strong>24 小时之后</strong>发生的院内死亡。24 小时内死亡者不进入分母，因此本评分以“度过预测窗”为条件。<br><br><strong>人群。</strong> ICU 收治且有 ICD 痛风诊断编码的成人；推导队列排除了既往心肌梗死、卒中或心力衰竭者。<br><br><strong>外部使用。</strong> 外部队列仅 61 例事件，痛风由别嘌醇处方界定。判别力可迁移（AUROC 0.720），但概率尺度不可直接使用，外部应用前必须重校准。<br><br><strong>非医疗器械。</strong> 仅供研究与教学，不替代临床判断，不得作为任何个体化决策的唯一依据。",
-      thm:"指标", thd:"推导队列（MIMIC-IV，5×5 交叉验证）", the:"外部队列（eICU-CRD）",
+      thm:"指标", thd:"推导（MIMIC-IV，5×5 CV）", the:"外部（原样计算）",
+      thc:"外部（截断后）", skill:"Brier 技巧分",
       slope:"校准斜率", inter:"校准截距", lang:"English"}
 };
 let lang = "en";
@@ -300,7 +304,9 @@ function applyLang(){
   document.getElementById("t-perfnote").textContent = t.perfnote;
   document.getElementById("th-m").textContent = t.thm;
   document.getElementById("th-d").textContent = t.thd;
-  document.getElementById("th-e").textContent = t.the;
+  document.getElementById("th-r").textContent = t.the;
+  document.getElementById("th-c").textContent = t.thc;
+  document.getElementById("td-skill").textContent = t.skill;
   document.getElementById("td-slope").textContent = t.slope;
   document.getElementById("td-int").textContent = t.inter;
   document.getElementById("foot").innerHTML = t.foot;

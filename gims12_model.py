@@ -57,12 +57,16 @@ RECAL_INTERCEPT = -1.4610
 
 PERFORMANCE = {
     "internal_auroc": 0.7712, "internal_ci": (0.7395, 0.8008),
-    "external_auroc": 0.7195, "external_ci": (0.6504, 0.7867),
-    "internal_brier": 0.0707, "external_brier": 0.0645,
-    "internal_cal_slope": 1.000, "internal_cal_intercept": -0.002,
-    "external_cal_slope": 0.497, "external_cal_intercept": -1.461,
-    "internal_hl_p": 0.588,
-    "external_brier_recalibrated": 0.0577,
+    "internal_brier": 0.0707, "internal_skill": 0.096,
+    "internal_cal_slope": 1.000, "internal_cal_intercept": -0.002, "internal_hl_p": 0.588,
+    # 外部：未截断（as computed） vs 截断后（default behaviour of this model）
+    "external_auroc": 0.723, "external_ci": (0.6504, 0.7867),
+    "external_brier": 0.0582, "external_skill": 0.020,
+    "external_cal_slope": 0.740, "external_cal_intercept": -0.830,
+    "external_auroc_raw": 0.718, "external_brier_raw": 0.0647,
+    "external_skill_raw": -0.090, "external_cal_slope_raw": 0.497,
+    "external_cal_intercept_raw": -1.461,
+    "external_brier_clamped_plus_platt": 0.0572,
     "n_derivation": 2853, "events_derivation": 244,
     "n_external": 962, "events_external": 61,
     "full_model_internal": 0.8117, "full_model_external": 0.7476, "full_model_n": 47,
